@@ -8,13 +8,13 @@ public class InfoDisplayManager : MonoBehaviour {
 	public GameObject infoCanvas;
 	public GameObject participantText;
 	public GameObject conditionText;
-	public GameObject positionText;
+	public GameObject headingText;
 	public GameObject runNoText;
 	public GameObject progressLabel;
 	public GameObject progressText;
 	public GameObject startMessage;
 	public GameObject outsidePlankMessage;
-	public GameObject feetInsideCanvas;
+	//public GameObject feetInsideCanvas;
 
 
 	// Use this for initialization
@@ -74,11 +74,11 @@ public class InfoDisplayManager : MonoBehaviour {
     }
 
 
-	public void UpdateDisplay(string participant, string condition, string position, string runNo, string progress)
+	public void UpdateDisplay(string participant, string condition, string heading, string runNo, string progress)
 	{
 		participantText.GetComponent<Text>().text = participant;
 		conditionText.GetComponent<Text>().text = condition;
-		positionText.GetComponent<Text>().text = position;
+		headingText.GetComponent<Text>().text = heading;
 		runNoText.GetComponent<Text>().text = runNo;
 		progressText.GetComponent<Text>().text = progress;
 
@@ -93,7 +93,7 @@ public class InfoDisplayManager : MonoBehaviour {
 
 	}
 
-
+    /*
 	public void UpdateFeetInsideDisplay(int feetInside)
     {
 		feetInsideCanvas.GetComponentInChildren<Text>().text = "Feet inside plank: " + feetInside.ToString();
@@ -110,6 +110,6 @@ public class InfoDisplayManager : MonoBehaviour {
 		{
 			feetInsideCanvas.GetComponentInChildren<Text>().color = Color.red;
 		}
-	}
+	}*/
 
 }

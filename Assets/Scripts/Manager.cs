@@ -17,17 +17,28 @@ public class Manager : MonoBehaviour {
     [Header("Baseline configuration")]
     public float baselineDuration = 60f;    //seconds
 
+    [Header("Experiment configuration")]
+    public int trialsPerBlock = 60;
+
+    [Header("Debug")]
+    public bool debugMode;
+
 
     //program control and status:
     private int programStatus;
     private int expBlockRunNo = 0;
     private int currentBlockRunNo = 0;
+    private bool blockStarted = false;
+    private bool blockEnd = false;
+    private string currentCondition;
     private float currentTime;
     private bool baselineStarted = false;
     private bool baselineEnd = false;
     private int baselineRunNo = 0;
     private int baselineAssrRunNo = 0;
-
+    private int currentTrialNo = 0;
+    private bool firstTrialStarted = false;
+    private string currentHeading;
 
     //paricipant inputs:
     private string participantID = "";
@@ -79,6 +90,24 @@ public class Manager : MonoBehaviour {
 	}
 
 
+    //public interface:
+    public bool GetBlockStarted()
+    {
+        return blockStarted;
+    }
+
+    public bool GetBaselineStarted()
+    {
+        return baselineStarted;
+    }
+
+    public bool GetFirstTrialStarted()
+    {
+        return firstTrialStarted;
+    }
+
+
+
     private void StartMainMenu()
     {
         programStatus = 0;
@@ -89,7 +118,7 @@ public class Manager : MonoBehaviour {
         infoManager.HideStartMessage();
         infoManager.HideOutsideMessage();
 
-     
+        canvasBlackScreen.SetActive(false);
 
     }
 
@@ -124,27 +153,35 @@ public class Manager : MonoBehaviour {
         programStatus = 3;
         mainMenu.SetActive(false);
         infoManager.ShowDisplay();
+        canvasBlackScreen.SetActive(false);
+
+        currentHeading = heading;
+        currentTrialNo = 0;
+        blockStarted = true;
+        firstTrialStarted = false;
 
 
+        /*
         if (heading == "A")
         {
             expBlockRunNo += 1;
             currentBlockRunNo = expBlockRunNo;
-
             
         }
         else if (heading == "B")
         {
             expBlockRunNo += 1;
             currentBlockRunNo = expBlockRunNo;
-
             
-        }
+        }*/
+        expBlockRunNo += 1;
+        currentBlockRunNo = expBlockRunNo;
+        currentCondition = "experiment";
 
 
         //write block start event
-        //marker.Write("plank:start;location:" + plankPosition + ";runNo:" + tempNo.ToString());
-        //Debug.Log("plank:start;location:" + plankPosition + ";runNo:" + tempNo.ToString());
+        marker.Write("expBlock:start;heading:" + currentHeading + ";runNo:" + currentBlockRunNo.ToString());
+        Debug.Log("expBlock:start;heading:" + currentHeading + ";runNo:" + currentBlockRunNo.ToString());
 
         //participant infos:
         tempMarkerText ="participantID:" + participantID + ";" +
@@ -155,10 +192,7 @@ public class Manager : MonoBehaviour {
         Debug.Log(tempMarkerText);
 
         //set info display
-        //infoManager.UpdateDisplay("experiment", plankPosition, tempNo.ToString(), "");
-        //infoManager.UpdateDisplay(participantID, "experiment", plankPosition, currentBlockRunNo.ToString(), "");
-
-        
+        infoManager.UpdateDisplay(participantID, currentCondition, currentHeading, expBlockRunNo.ToString(), "");             
 
     }
 
@@ -168,24 +202,30 @@ public class Manager : MonoBehaviour {
         //This method is called from a button in the main menu
 
         programStatus = 4;
+        baselineStarted = true;
         baselineEnd = false;
         currentTime = 0;
 
         mainMenu.SetActive(false);
         infoManager.ShowDisplay();
+        canvasBlackScreen.SetActive(true);
+
+        string strASSR;
 
         if (!assr)
         {
             baselineRunNo += 1;
             currentBlockRunNo = baselineRunNo;
-
+            strASSR = "no";
+            currentCondition = "baseline";
             
         }
         else
         {
             baselineAssrRunNo += 1;
             currentBlockRunNo = baselineAssrRunNo;
-
+            strASSR = "yes";
+            currentCondition = "baselineASSR";
             
         }
         
@@ -193,16 +233,15 @@ public class Manager : MonoBehaviour {
         //write baseline start marker
         tempMarkerText =
             "baseline:start;" +
-            //"location:" + plankPosition + ";" +
+            "assr:" + strASSR + ";" +
             "runNo:" + currentBlockRunNo.ToString() + ";" +
             "duration:" + baselineDuration.ToString();
 
-        marker.Write(tempMarkerText);
         Debug.Log(tempMarkerText);
-        
+        marker.Write(tempMarkerText);
 
         //set info display
-        //infoManager.UpdateDisplay(participantID, "baseline", plankPosition, currentBlockRunNo.ToString(), "");
+        infoManager.UpdateDisplay(participantID, currentCondition, "", currentBlockRunNo.ToString(), "");
 
     }
 
@@ -288,6 +327,75 @@ public class Manager : MonoBehaviour {
     }
 
 
+    private void runExperimentBlock()
+    {
+        //ToDo ?
+        
+
+    }
+
+    private void EndExperimentBlock()
+    {
+        //play end sound:
+        //PlaySound("endCondition");
+
+        //lsl marker
+        marker.Write("expBlock:end");
+        Debug.Log("exüBlock:end");
+
+        //go to main menu
+        StartMainMenu();
+    }
+
+    public void StartTrial()
+    {
+        currentTrialNo += 1;
+        firstTrialStarted = true;
+
+
+        //lsl marker
+        tempMarkerText =
+                "trial:start" + ";" +
+                "trialNo:" + currentTrialNo.ToString() + ";" +
+                "heading:" + currentHeading.ToString();
+
+        marker.Write(tempMarkerText);
+        Debug.Log(tempMarkerText);
+
+        //set info display
+        infoManager.UpdateDisplay(participantID, currentCondition, currentHeading, currentBlockRunNo.ToString(), currentTrialNo.ToString());
+
+
+    }
+
+
+    public void NextTrial()
+    {
+        //end current trial
+        tempMarkerText =
+            "trial:end;" +
+            "trialNo:" + currentTrialNo.ToString();
+
+        marker.Write(tempMarkerText);
+        Debug.Log(tempMarkerText);
+
+
+        //check if all trials have been run
+        if (currentTrialNo < trialsPerBlock)
+        {
+            //start next trial
+            StartTrial();
+            
+        }
+        else
+        {
+            //end of block
+            EndExperimentBlock();
+        }
+
+    }
+
+
     // Update is called once per frame
     void Update () {
 
@@ -298,7 +406,7 @@ public class Manager : MonoBehaviour {
                 case 0: //main menu
                     {
                         //check if all inputs in Configuration have been given and alle calibration was made
-                        if (configComplete)
+                        if (configComplete || debugMode)
                         {
                             buttonStartBaseline.GetComponent<Button>().interactable = true;
                             buttonStartBaselineASSR.GetComponent<Button>().interactable = true;
@@ -334,20 +442,17 @@ public class Manager : MonoBehaviour {
                     {
                         //check for abort by pressing the escape key
                         if (Input.GetKeyDown("escape"))
-                        {
-                            //abort paradigm:
-                            //paradigm.AbortParadigm();
-
-                            //marker.Write("experiment:abort");
-                            //Debug.Log("experiment:abort");
+                        {    
+                            marker.Write("experiment:abort");
+                            Debug.Log("experiment:abort");
 
                             //go to main menu
                             StartMainMenu();
                             
                         }
-                        /*else
+                        else
                         {
-                            //check for space bar press to start the paradigm
+                            /*check for space bar press to start the paradigm
                             if (!spacebarPressed)
                             {
                                 //check if participant is inside plank
@@ -389,9 +494,12 @@ public class Manager : MonoBehaviour {
                                     //go to main menu
                                     StartMainMenu();
                                 }
-                            }                                   
+                            }*/
 
-                        }*/
+
+                            //run experiment
+                            runExperimentBlock();
+                        }
                         break;
                     }
                 case 4: //baseline
@@ -417,6 +525,7 @@ public class Manager : MonoBehaviour {
                                 if (currentTime > baselineDuration)
                                 {
                                     baselineEnd = true;
+                                    baselineStarted = false;
 
                                     //end of baseline
                                     marker.Write("baseline:end");
@@ -431,9 +540,9 @@ public class Manager : MonoBehaviour {
                                 }
                                 else
                                 {
-                                    /*update desktop info texts
+                                    //update desktop info texts
                                     int tempNo;
-                                    if (plankPosition == "ground")
+                                    if (currentCondition.Contains("ASSR"))
                                     {
                                         tempNo = baselineRunNo;
                                     }
@@ -441,8 +550,8 @@ public class Manager : MonoBehaviour {
                                     {
                                         tempNo = baselineAssrRunNo;
                                     }
-                                    infoManager.UpdateDisplay(participantID, "baseline", plankPosition, tempNo.ToString(), string.Format("{0}:{1:00}", (int)currentTime / 60, (int)currentTime % 60));
-                                    */
+                                    infoManager.UpdateDisplay(participantID, currentCondition, "", tempNo.ToString(), string.Format("{0}:{1:00}", (int)currentTime / 60, (int)currentTime % 60));
+                                    
                                 }
                             }
                         }

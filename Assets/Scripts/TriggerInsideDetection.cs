@@ -5,9 +5,8 @@ using Assets.LSL4Unity.Scripts; // reference the LSL4Unity namespace to get acce
 
 
 public class TriggerInsideDetection : MonoBehaviour
-{
-    //public OddballParadigma paradigm;
-    public LSLMarkerStream marker;
+{    
+    public Manager manager;
 
     // Start is called before the first frame update
     void Start()
@@ -24,41 +23,39 @@ public class TriggerInsideDetection : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
-
-        //check if paradigm is active
-        //if(paradigm.GetParadigmStarted())
-        //{
+        //only while experiment is running
+        if (manager.GetBlockStarted())
+        {
             //lsl marker
-            marker.Write(other.name + " entered plank");
-            print(other.name + " entered plank");
+            manager.marker.Write(other.name + " entered " + this.gameObject.name);
+            print(other.name + " entered " + this.gameObject.name);
 
-            //only increment if feet collided
-            if (other.name.Contains("Shoe"))
+            //only if this scipt is attached to the mid-point object
+            if (gameObject.name.Contains("MidPoint"))
             {
-                //paradigm.IncrementInsidePlankCounter();
-            }
+                if (!manager.GetFirstTrialStarted())
+                {
+                    manager.StartTrial();
+                }
+                else
+                {
+                    manager.NextTrial();
+                } 
+            }   
+        }
 
-        //}
 
     }
 
     private void OnTriggerExit(Collider other)
     {
-
-        //check if paradigm is active
-        //if (paradigm.GetParadigmStarted())
-        //{
+        //only while experiment is running
+        if (manager.GetBlockStarted())
+        {
             //lsl marker
-            marker.Write(other.name + " exited plank");
-            print(other.name + " exited plank");
-
-            //only increment if feet collided
-            if (other.name.Contains("Shoe"))
-            {
-                //paradigm.DecrementInsidePlankCounter();
-            }
-
-        //}
+            manager.marker.Write(other.name + " exited " + this.gameObject.name);
+            print(other.name + " exited " + this.gameObject.name);
+        }
 
     }
 
