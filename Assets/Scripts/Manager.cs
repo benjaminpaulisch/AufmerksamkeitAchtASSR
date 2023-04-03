@@ -11,7 +11,7 @@ public class Manager : MonoBehaviour {
     //public interface:
     [Header("Object References")]
     
-    public LSLMarkerStream marker;
+    public LSLMarkerStream_ExpEvents marker;
     public InfoDisplayManager infoManager;
 
     [Header("Baseline configuration")]
