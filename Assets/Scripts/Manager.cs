@@ -9,16 +9,22 @@ using System.Collections;
 public class Manager : MonoBehaviour {
 
     //public interface:
-    [Header("Object References")]
-    
-    public LSLMarkerStream_ExpEvents marker;
-    public InfoDisplayManager infoManager;
-
     [Header("Baseline configuration")]
     public float baselineDuration = 60f;    //seconds
 
     [Header("Experiment configuration")]
     public int trialsPerBlock = 60;
+
+    [Header("Audio configuration")]
+    public float frequency1;
+    public float frequency2;
+    public float sampleRate = 44100;
+    public float waveLengthInSeconds = 2.0f;
+    public int percentVolume = 100;
+
+    [Header("Object References")]    
+    public LSLMarkerStream_ExpEvents marker;
+    public InfoDisplayManager infoManager;     
 
     [Header("Debug")]
     public bool debugMode;
@@ -62,6 +68,11 @@ public class Manager : MonoBehaviour {
     private GameObject mainMenu, configMenu, canvasBlackScreen, blackScreenImage;
 
 
+    //audio
+    private AudioSource audioSource;
+    private int audioTimeIndex = 0;
+
+
 
     // Use this for initialization
     void Start () 
@@ -84,6 +95,13 @@ public class Manager : MonoBehaviour {
 
 
         //infoManager.UpdateFeetInsideDisplay(paradigm.GetInsidePlankCounter());
+
+        //initialize audio source
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0; //force 2D sound
+        audioSource.Stop(); //avoids audiosource from starting to play automatically
+
 
         StartMainMenu();
         
@@ -119,6 +137,13 @@ public class Manager : MonoBehaviour {
         infoManager.HideOutsideMessage();
 
         canvasBlackScreen.SetActive(false);
+
+        //stop audio if its running
+        if (audioSource.isPlaying)
+        {
+            audioSource.Stop();
+            audioTimeIndex = 0;  //resets timer
+        }                                                
 
     }
 
@@ -177,6 +202,11 @@ public class Manager : MonoBehaviour {
         expBlockRunNo += 1;
         currentBlockRunNo = expBlockRunNo;
         currentCondition = "experiment";
+
+
+        //start audio
+        audioTimeIndex = 0;  //resets timer before playing sound
+        audioSource.Play();
 
 
         //write block start event
@@ -330,7 +360,13 @@ public class Manager : MonoBehaviour {
     private void runExperimentBlock()
     {
         //ToDo ?
-        
+
+        //check if audio is not running -> restart it
+        if (!audioSource.isPlaying)
+        {
+            audioTimeIndex = 0;  //resets timer before playing sound
+            audioSource.Play();
+        }
 
     }
 
@@ -338,6 +374,11 @@ public class Manager : MonoBehaviour {
     {
         //play end sound:
         //PlaySound("endCondition");
+
+        //stop audio        
+        audioSource.Stop();
+        audioTimeIndex = 0;  //resets timer
+
 
         //lsl marker
         marker.Write("expBlock:end");
@@ -394,6 +435,34 @@ public class Manager : MonoBehaviour {
         }
 
     }
+
+
+
+    void OnAudioFilterRead(float[] data, int channels)
+    {
+        for (int i = 0; i < data.Length; i += channels)
+        {
+            data[i] = CreateSine(audioTimeIndex, frequency1, sampleRate, percentVolume);
+
+            if (channels == 2)
+                data[i + 1] = CreateSine(audioTimeIndex, frequency2, sampleRate, percentVolume);
+
+            audioTimeIndex++;
+
+            //if timeIndex gets too big, reset it to 0
+            if (audioTimeIndex >= (sampleRate * waveLengthInSeconds))
+            {
+                audioTimeIndex = 0;
+            }
+        }
+    }
+
+    //Creates a sinewave
+    public float CreateSine(int timeIndex, float frequency, float sampleRate, int percentVolume)
+    {
+        return Mathf.Sin(2 * Mathf.PI * timeIndex * frequency / sampleRate )*percentVolume/100;
+    }
+
 
 
     // Update is called once per frame
