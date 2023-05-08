@@ -28,6 +28,8 @@ public class Manager : MonoBehaviour {
 
     [Header("Debug")]
     public bool debugMode;
+    public GameObject EyeTracking;
+    public bool disableEyetracking;
 
 
     //program control and status:
@@ -73,6 +75,14 @@ public class Manager : MonoBehaviour {
     private int audioTimeIndex = 0;
 
 
+    private void Awake()
+    {
+        if (disableEyetracking)
+        {
+            EyeTracking.SetActive(false);
+        }
+    }
+
 
     // Use this for initialization
     void Start () 
@@ -101,7 +111,6 @@ public class Manager : MonoBehaviour {
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0; //force 2D sound
         audioSource.Stop(); //avoids audiosource from starting to play automatically
-
 
         StartMainMenu();
         
