@@ -107,10 +107,12 @@ public class Manager : MonoBehaviour {
         //infoManager.UpdateFeetInsideDisplay(paradigm.GetInsidePlankCounter());
 
         //initialize audio source
+        /*
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 0; //force 2D sound
         audioSource.Stop(); //avoids audiosource from starting to play automatically
+        */
 
         StartMainMenu();
         
@@ -147,12 +149,13 @@ public class Manager : MonoBehaviour {
 
         canvasBlackScreen.SetActive(false);
 
-        //stop audio if its running
+        /*stop audio if its running
         if (audioSource.isPlaying)
         {
             audioSource.Stop();
             audioTimeIndex = 0;  //resets timer
-        }                                                
+        }
+        */
 
     }
 
@@ -215,7 +218,7 @@ public class Manager : MonoBehaviour {
 
         //start audio
         audioTimeIndex = 0;  //resets timer before playing sound
-        audioSource.Play();
+        //audioSource.Play();
 
 
         //write block start event
@@ -370,12 +373,12 @@ public class Manager : MonoBehaviour {
     {
         //ToDo ?
 
-        //check if audio is not running -> restart it
+        /*check if audio is not running -> restart it
         if (!audioSource.isPlaying)
         {
             audioTimeIndex = 0;  //resets timer before playing sound
             audioSource.Play();
-        }
+        }*/
 
     }
 
@@ -385,7 +388,7 @@ public class Manager : MonoBehaviour {
         //PlaySound("endCondition");
 
         //stop audio        
-        audioSource.Stop();
+        //audioSource.Stop();
         audioTimeIndex = 0;  //resets timer
 
 
