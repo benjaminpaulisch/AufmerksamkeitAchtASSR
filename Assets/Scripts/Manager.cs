@@ -24,7 +24,9 @@ public class Manager : MonoBehaviour {
 
     [Header("Object References")]    
     public LSLMarkerStream_ExpEvents marker;
-    public InfoDisplayManager infoManager;     
+    public InfoDisplayManager infoManager; 
+    public AudioSource baselineEndSound;
+    public AudioSource conditionEndSound;
 
     [Header("Debug")]
     public bool debugMode;
@@ -67,7 +69,7 @@ public class Manager : MonoBehaviour {
     //UI gameobjects
     private GameObject buttonExpBlockA, buttonPlankRoof, buttonStartBlockA, buttonStartBlockB, buttonStartBaseline, buttonStartBaselineASSR, textMissingInputs;
     private GameObject inputParticipantID, inputParticipantAge, inputParticipantSex, inputParticipantGamingExp;
-    private GameObject mainMenu, configMenu, /*canvasBlackScreen,*/ blackScreenImage;
+    private GameObject mainMenu, configMenu, /*canvasBlackScreen,*/ blackScreenImage, buttonEyeCalibration;
 
 
     //audio
@@ -80,6 +82,7 @@ public class Manager : MonoBehaviour {
         if (disableEyetracking)
         {
             EyeTracking.SetActive(false);
+            buttonEyeCalibration.SetActive(false);
         }
     }
 
@@ -217,7 +220,7 @@ public class Manager : MonoBehaviour {
 
 
         //start audio
-        audioTimeIndex = 0;  //resets timer before playing sound
+        //audioTimeIndex = 0;  //resets timer before playing sound
         //audioSource.Play();
 
 
@@ -386,10 +389,11 @@ public class Manager : MonoBehaviour {
     {
         //play end sound:
         //PlaySound("endCondition");
+        conditionEndSound.Play();
 
         //stop audio        
         //audioSource.Stop();
-        audioTimeIndex = 0;  //resets timer
+        //audioTimeIndex = 0;  //resets timer
 
 
         //lsl marker
@@ -449,7 +453,7 @@ public class Manager : MonoBehaviour {
     }
 
 
-
+    /*
     void OnAudioFilterRead(float[] data, int channels)
     {
         for (int i = 0; i < data.Length; i += channels)
@@ -473,8 +477,13 @@ public class Manager : MonoBehaviour {
     public float CreateSine(int timeIndex, float frequency, float sampleRate, int percentVolume)
     {
         return Mathf.Sin(2 * Mathf.PI * timeIndex * frequency / sampleRate )*percentVolume/100;
-    }
+    }*/
 
+
+    public void StartEyeCalibration()
+    {
+        ViveSR.anipal.Eye.SRanipal_Eye.LaunchEyeCalibration();
+    }
 
 
     // Update is called once per frame
@@ -613,8 +622,8 @@ public class Manager : MonoBehaviour {
                                     Debug.Log("baseline:end");
 
                                     //play audio
-                                    //baselineEndSound.volume = 1f;
-                                    //baselineEndSound.Play();
+                                    baselineEndSound.volume = 1f;
+                                    baselineEndSound.Play();
 
                                     //go to main menu
                                     StartMainMenu();
