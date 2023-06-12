@@ -82,7 +82,6 @@ public class Manager : MonoBehaviour {
         if (disableEyetracking)
         {
             EyeTracking.SetActive(false);
-            buttonEyeCalibration.SetActive(false);
         }
     }
 
@@ -105,6 +104,14 @@ public class Manager : MonoBehaviour {
         configMenu = GameObject.Find("CanvasConfigMenu");
         //canvasBlackScreen = GameObject.Find("CanvasBlackScreen");
         blackScreenImage = GameObject.Find("BlackScreenImage");
+        buttonEyeCalibration = GameObject.Find("ButtonEyeCalibration");
+
+
+        if (disableEyetracking)
+        {
+            buttonEyeCalibration.SetActive(false);
+        }
+        
 
 
         //infoManager.UpdateFeetInsideDisplay(paradigm.GetInsidePlankCounter());

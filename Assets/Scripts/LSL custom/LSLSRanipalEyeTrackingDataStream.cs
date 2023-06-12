@@ -13,7 +13,7 @@ public class LSLSRanipalEyeTrackingDataStream : MonoBehaviour
     public double dataRateEyeData = 90;
     public MomentForSampling samplingEyeData;
 
-    private int channelCountEyeData = 13;
+    private int channelCountEyeData = 19;
     private liblsl.StreamOutlet outletEyeData;
     private liblsl.StreamInfo streamInfoEyeData;
     private liblsl.XMLElement objs, obj;
@@ -77,6 +77,27 @@ public class LSLSRanipalEyeTrackingDataStream : MonoBehaviour
 
         //Gaze origin
         channelEyeData = channelsEyeData.append_child("channel");
+        channelEyeData.append_child_value("label", "GazeOriginRaw_X");
+        channelEyeData.append_child_value("eye", "combined");
+        channelEyeData.append_child_value("type", "PositionX");
+        channelEyeData.append_child_value("unit", "m");
+        channelEyeData.append_child_value("coordinate_system", "local-space");
+
+        channelEyeData = channelsEyeData.append_child("channel");
+        channelEyeData.append_child_value("label", "GazeOriginRaw_Y");
+        channelEyeData.append_child_value("eye", "combined");
+        channelEyeData.append_child_value("type", "PositionY");
+        channelEyeData.append_child_value("unit", "m");
+        channelEyeData.append_child_value("coordinate_system", "local-space");
+
+        channelEyeData = channelsEyeData.append_child("channel");
+        channelEyeData.append_child_value("label", "GazeOriginRaw_Z");
+        channelEyeData.append_child_value("eye", "combined");
+        channelEyeData.append_child_value("type", "PositionZ");
+        channelEyeData.append_child_value("unit", "m");
+        channelEyeData.append_child_value("coordinate_system", "local-space");
+
+        channelEyeData = channelsEyeData.append_child("channel");
         channelEyeData.append_child_value("label", "GazeOrigin_X");
         channelEyeData.append_child_value("eye", "combined");
         channelEyeData.append_child_value("type", "PositionX");
@@ -98,6 +119,27 @@ public class LSLSRanipalEyeTrackingDataStream : MonoBehaviour
         channelEyeData.append_child_value("coordinate_system", "world-space");
 
         //gaze direction
+        channelEyeData = channelsEyeData.append_child("channel");
+        channelEyeData.append_child_value("label", "GazeDirectionRaw_X");
+        channelEyeData.append_child_value("eye", "combined");
+        channelEyeData.append_child_value("type", "DirectionX");
+        channelEyeData.append_child_value("unit", "m");
+        channelEyeData.append_child_value("coordinate_system", "local-space");
+
+        channelEyeData = channelsEyeData.append_child("channel");
+        channelEyeData.append_child_value("label", "GazeDirectionRaw_Y");
+        channelEyeData.append_child_value("eye", "combined");
+        channelEyeData.append_child_value("type", "DirectionY");
+        channelEyeData.append_child_value("unit", "m");
+        channelEyeData.append_child_value("coordinate_system", "local-space");
+
+        channelEyeData = channelsEyeData.append_child("channel");
+        channelEyeData.append_child_value("label", "GazeDirectionRaw_Z");
+        channelEyeData.append_child_value("eye", "combined");
+        channelEyeData.append_child_value("type", "DirectionZ");
+        channelEyeData.append_child_value("unit", "m");
+        channelEyeData.append_child_value("coordinate_system", "local-space");
+
         channelEyeData = channelsEyeData.append_child("channel");
         channelEyeData.append_child_value("label", "GazeDirection_X");
         channelEyeData.append_child_value("eye", "combined");
@@ -247,19 +289,25 @@ public class LSLSRanipalEyeTrackingDataStream : MonoBehaviour
             currentSample[34] = verboseData.combined.eye_data.pupil_position_in_sensor_area.y;
             */
 
-            currentSample[0] = originCorrected.x;                                   //data from GazeRay
-            currentSample[1] = originCorrected.y;                                   //data from GazeRay
-            currentSample[2] = originCorrected.z;                                   //data from GazeRay
-            currentSample[3] = directionCorrected.x;                                //data from GazeRay
-            currentSample[4] = directionCorrected.y;                                //data from GazeRay
-            currentSample[5] = directionCorrected.z;                                //data from GazeRay
-            currentSample[6] = System.Convert.ToSingle(verboseData.combined.convergence_distance_validity);
-            currentSample[7] = verboseData.combined.convergence_distance_mm;
-            currentSample[8] = verboseData.left.pupil_diameter_mm;
-            currentSample[9] = verboseData.right.pupil_diameter_mm;
-            currentSample[10] = verboseData.left.eye_openness;                       //value is between 0 and 1
-            currentSample[11] = verboseData.right.eye_openness;                      //value is between 0 and 1
-            currentSample[12] = currentDataValidity;                                //validity of current sample: 0 if not valid, 1 if valid
+            currentSample[0] = GazeOriginCombinedLocal.x;                           //data from GazeRay
+            currentSample[1] = GazeOriginCombinedLocal.y;                           //data from GazeRay
+            currentSample[2] = GazeOriginCombinedLocal.z;                           //data from GazeRay
+            currentSample[3] = originCorrected.x;                                   //data from GazeRay aggregated with hmd position
+            currentSample[4] = originCorrected.y;                                   //data from GazeRay aggregated with hmd position
+            currentSample[5] = originCorrected.z;                                   //data from GazeRay aggregated with hmd position
+            currentSample[6] = GazeDirectionCombinedLocal.x;                        //data from GazeRay
+            currentSample[7] = GazeDirectionCombinedLocal.y;                        //data from GazeRay
+            currentSample[8] = GazeDirectionCombinedLocal.z;                        //data from GazeRay
+            currentSample[9] = directionCorrected.x;                                //data from GazeRay aggregated with hmd position
+            currentSample[10]= directionCorrected.y;                                //data from GazeRay aggregated with hmd position
+            currentSample[11] = directionCorrected.z;                               //data from GazeRay aggregated with hmd position
+            currentSample[12] = System.Convert.ToSingle(verboseData.combined.convergence_distance_validity);
+            currentSample[13] = verboseData.combined.convergence_distance_mm;
+            currentSample[14] = verboseData.left.pupil_diameter_mm;
+            currentSample[15] = verboseData.right.pupil_diameter_mm;
+            currentSample[16] = verboseData.left.eye_openness;                       //value is between 0 and 1
+            currentSample[17] = verboseData.right.eye_openness;                      //value is between 0 and 1
+            currentSample[18] = currentDataValidity;                                //validity of current sample: 0 if not valid, 1 if valid
 
             outletEyeData.push_sample(currentSample, liblsl.local_clock());
 
