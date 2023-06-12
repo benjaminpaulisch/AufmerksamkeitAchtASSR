@@ -67,7 +67,7 @@ public class Manager : MonoBehaviour {
     //UI gameobjects
     private GameObject buttonExpBlockA, buttonPlankRoof, buttonStartBlockA, buttonStartBlockB, buttonStartBaseline, buttonStartBaselineASSR, textMissingInputs;
     private GameObject inputParticipantID, inputParticipantAge, inputParticipantSex, inputParticipantGamingExp;
-    private GameObject mainMenu, configMenu, canvasBlackScreen, blackScreenImage;
+    private GameObject mainMenu, configMenu, /*canvasBlackScreen,*/ blackScreenImage;
 
 
     //audio
@@ -100,7 +100,7 @@ public class Manager : MonoBehaviour {
         inputParticipantGamingExp = GameObject.Find("DropdownParticipantGaming");
         mainMenu = GameObject.Find("CanvasMainMenu");
         configMenu = GameObject.Find("CanvasConfigMenu");
-        canvasBlackScreen = GameObject.Find("CanvasBlackScreen");
+        //canvasBlackScreen = GameObject.Find("CanvasBlackScreen");
         blackScreenImage = GameObject.Find("BlackScreenImage");
 
 
@@ -147,7 +147,7 @@ public class Manager : MonoBehaviour {
         infoManager.HideStartMessage();
         infoManager.HideOutsideMessage();
 
-        canvasBlackScreen.SetActive(false);
+        //canvasBlackScreen.SetActive(false);
 
         /*stop audio if its running
         if (audioSource.isPlaying)
@@ -190,7 +190,7 @@ public class Manager : MonoBehaviour {
         programStatus = 3;
         mainMenu.SetActive(false);
         infoManager.ShowDisplay();
-        canvasBlackScreen.SetActive(false);
+        //canvasBlackScreen.SetActive(false);
 
         currentHeading = heading;
         currentTrialNo = 0;
@@ -250,7 +250,7 @@ public class Manager : MonoBehaviour {
 
         mainMenu.SetActive(false);
         infoManager.ShowDisplay();
-        canvasBlackScreen.SetActive(true);
+        //canvasBlackScreen.SetActive(true);
 
         string strASSR;
 
