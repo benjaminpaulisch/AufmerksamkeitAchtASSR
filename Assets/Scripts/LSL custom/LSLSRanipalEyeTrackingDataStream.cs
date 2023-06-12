@@ -27,8 +27,9 @@ public class LSLSRanipalEyeTrackingDataStream : MonoBehaviour
     Vector3 originCorrected, directionCorrected;
     private float currentDataValidity;
     private float eyeOpennessLeft, eyeOpennessRight;
+    private Vector3 GazeOriginCombinedLocal, GazeDirectionCombinedLocal;
 
-
+    /*
     [Header("FocusedObjectsEvents")]
     public GameObject markerStream;
     private LSLMarkerStream_FocusedObjs focusedObjectsStream;
@@ -39,8 +40,8 @@ public class LSLSRanipalEyeTrackingDataStream : MonoBehaviour
     private GameObject oldHitObject, currentHitObject = null;
     private RaycastHit raycastHit;                      //used for detecting raycast collision
     private int layerMask = 1 << 8;                     //only hit objects in this layer
-
-
+    */
+    /*
     [Header("FocusedHitPointStream")]
     public string StreamNameHitPoint = "FocusedHitPoints";
     public string StreamTypeHitPoint = "Gaze";
@@ -55,14 +56,13 @@ public class LSLSRanipalEyeTrackingDataStream : MonoBehaviour
     private liblsl.XMLElement objsHitPoint, objHitPoint;
     private liblsl.XMLElement channelsHitPoint, channelHitPoint;
     private const liblsl.channel_format_t lslChannelFormatHitPoint = liblsl.channel_format_t.cf_float32;
-    private Vector3 currentHitPoint;
-    private Vector3 GazeOriginCombinedLocal, GazeDirectionCombinedLocal;
-
+    private Vector3 currentHitPoint;     
+    */
 
     // Start is called before the first frame update
     void Start()
     {
-        focusedObjectsStream = markerStream.GetComponent<LSLMarkerStream_FocusedObjs>();
+        //focusedObjectsStream = markerStream.GetComponent<LSLMarkerStream_FocusedObjs>();
 
         //##### Initialize EyeData LSL Stream #####
         currentSample = new float[channelCountEyeData];
@@ -212,7 +212,7 @@ public class LSLSRanipalEyeTrackingDataStream : MonoBehaviour
         outletEyeData = new liblsl.StreamOutlet(streamInfoEyeData);
 
 
-        //### HitPointStream:
+        /*### HitPointStream:
         streamInfoHitPoint = new liblsl.StreamInfo(StreamNameHitPoint, StreamTypeHitPoint, channelCountHitPoint, dataRateHitPoint, lslChannelFormatHitPoint, uidHitPoint);
 
         streamInfoHitPoint.desc().append_child("synchronization").append_child_value("can_drop_samples", "true");
@@ -241,7 +241,7 @@ public class LSLSRanipalEyeTrackingDataStream : MonoBehaviour
         channelHitPoint.append_child_value("coordinate_system", "world-space");
 
         outletHitPoint = new liblsl.StreamOutlet(streamInfoHitPoint);
-
+        */
     }
 
     private void pushSample()
@@ -421,7 +421,7 @@ public class LSLSRanipalEyeTrackingDataStream : MonoBehaviour
 
         //if (SRanipal_Eye_v2.GetEyeOpenness(EyeIndex.RIGHT, out eyeOpennessRight)) { }
 
-        //##### Get focused object
+        /*##### Get focused object
         //Debug.Log("gazeOrigin.x:" + (verboseData.combined.eye_data.gaze_origin_mm.x/1000).ToString() + " gazeOrigin.y:" + (verboseData.combined.eye_data.gaze_origin_mm.y/1000).ToString() + " gazeOrigin.z:" + (verboseData.combined.eye_data.gaze_origin_mm.z/1000).ToString());
         //Debug.Log("originCorrected: " + (VRCamera.transform.position.x + -verboseData.combined.eye_data.gaze_origin_mm.x / 1000).ToString() + " " + (VRCamera.transform.position.x + verboseData.combined.eye_data.gaze_origin_mm.y / 1000).ToString() + " " + (VRCamera.transform.position.x + verboseData.combined.eye_data.gaze_origin_mm.z / 1000).ToString());
         //originCorrected = new Vector3(VRCamera.transform.position.x + -verboseData.combined.eye_data.gaze_origin_mm.x / 1000, VRCamera.transform.position.x + -verboseData.combined.eye_data.gaze_origin_mm.y / 1000, VRCamera.transform.position.x + verboseData.combined.eye_data.gaze_origin_mm.z / 1000);
@@ -484,18 +484,20 @@ public class LSLSRanipalEyeTrackingDataStream : MonoBehaviour
 
         //update old hit object
         oldHitObject = currentHitObject;
-
+        */
 
         //update Hit Point sample:
-        currentSampleHitPoint = new float[] { currentHitPoint.x, currentHitPoint.y, currentHitPoint.z };
+        //currentSampleHitPoint = new float[] { currentHitPoint.x, currentHitPoint.y, currentHitPoint.z };
 
 
         //check MomentForSampling
         if (samplingEyeData == MomentForSampling.Update)
             pushSample();
 
+        /*
         if (samplingHitPoint == MomentForSampling.Update)
             outletHitPoint.push_sample(currentSampleHitPoint, liblsl.local_clock());
+            */
     }
 
     void LateUpdate()
@@ -504,8 +506,9 @@ public class LSLSRanipalEyeTrackingDataStream : MonoBehaviour
         if (samplingEyeData == MomentForSampling.LateUpdate)
             pushSample();
 
+        /*
         if (samplingHitPoint == MomentForSampling.LateUpdate)
-            outletHitPoint.push_sample(currentSampleHitPoint, liblsl.local_clock());
+            outletHitPoint.push_sample(currentSampleHitPoint, liblsl.local_clock());*/
     }
 
 }
