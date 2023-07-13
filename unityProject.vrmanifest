@@ -5,10 +5,10 @@
       "app_key": "application.generated.unity.masterarbeiteric.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "C:\\VR_Content\\AufmerksamkeitAchtASSR\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "D:\\__Experiments__\\Eric\\AufmerksamkeitAchtASSR\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
-          "name": "Masterarbeit Eric [Testing]"
+          "name": "ASSR [Testing]"
         }
       }
     }
